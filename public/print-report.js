@@ -1,82 +1,11 @@
 /**
  * Print Report Functions for OJT Journal Report Generator
  * Handles Download Report modal, Word/PDF download, and printing
+ * 
+ * Note: DOM elements and state variables are defined in script.js
+ * Event listeners are set up in script.js
+ * This file only contains the implementation functions
  */
-
-// DOM Elements for Download Report
-const downloadReportBtn = document.getElementById('downloadReportBtn');
-const downloadReportModal = document.getElementById('downloadReportModal');
-const downloadReportContent = document.getElementById('downloadReportContent');
-const closeDownloadBtn = document.getElementById('closeDownloadBtn');
-const printDownloadBtn = document.getElementById('printDownloadBtn');
-const downloadWordBtn = document.getElementById('downloadWordBtn');
-const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-
-// DOM Elements for AI Report
-const aiReportBtn = document.getElementById('aiReportBtn');
-const aiReportModal = document.getElementById('aiReportModal');
-const aiReportContent = document.getElementById('aiReportContent');
-const closeAIReportBtn = document.getElementById('closeAIReportBtn');
-const aiPrintBtn = document.getElementById('aiPrintBtn');
-const aiDownloadWordBtn = document.getElementById('aiDownloadWordBtn');
-const aiDownloadPdfBtn = document.getElementById('aiDownloadPdfBtn');
-
-// State
-let downloadReportCache = null;
-let aiReportCache = null;
-
-/**
- * Initialize Download Report event listeners
- */
-function initializeDownloadReport() {
-    // Download Report button
-    downloadReportBtn.addEventListener('click', handleGenerateDownloadReport);
-
-    // Close Download button
-    closeDownloadBtn.addEventListener('click', () => {
-        downloadReportModal.classList.remove('show');
-    });
-
-    // Print Download button
-    printDownloadBtn.addEventListener('click', handlePrintDownloadReport);
-
-    // Download Word button
-    downloadWordBtn.addEventListener('click', handleDownloadWord);
-
-    // Download PDF button
-    downloadPdfBtn.addEventListener('click', handleDownloadPdf);
-
-    // Close modal on overlay click
-    downloadReportModal.addEventListener('click', (e) => {
-        if (e.target.classList.contains('download-report-overlay')) {
-            downloadReportModal.classList.remove('show');
-        }
-    });
-
-    // AI Report button
-    aiReportBtn.addEventListener('click', handleGenerateAIReport);
-
-    // Close AI Report button
-    closeAIReportBtn.addEventListener('click', () => {
-        aiReportModal.classList.remove('show');
-    });
-
-    // AI Print button
-    aiPrintBtn.addEventListener('click', handlePrintAIReport);
-
-    // AI Download Word button
-    aiDownloadWordBtn.addEventListener('click', handleDownloadAIWord);
-
-    // AI Download PDF button
-    aiDownloadPdfBtn.addEventListener('click', handleDownloadAIPdf);
-
-    // Close AI modal on overlay click
-    aiReportModal.addEventListener('click', (e) => {
-        if (e.target.classList.contains('download-report-overlay')) {
-            aiReportModal.classList.remove('show');
-        }
-    });
-}
 
 /**
  * Handle Generate Download Report (non-AI, just entries)
@@ -119,7 +48,27 @@ async function handleGenerateDownloadReport() {
  * Display Download Report (non-AI, just entries following ISPSC format)
  */
 function displayDownloadReport(report) {
-    const { entries, start_date, end_date, total_days, student_name } = report;
+    const { entries, start_date, end_date, total_days, student_name, report_info } = report;
+    
+    // Use report info data if available, otherwise use defaults
+    const info = report_info || {};
+    const studentName = info.student_name || student_name || 'JUAN DELA CRUZ';
+    const studentCourse = info.student_course || 'Bachelor of Science in Information Technology';
+    const schoolYear = info.school_year || 'S.Y. 2025 - 2026';
+    const companyName = info.company_name || '(Name of Company/office assigned)';
+    const companyLocation = info.company_location || '';
+    const companyNatureOfBusiness = info.company_nature_of_business || '';
+    const companyBackground = info.company_background || '';
+    const ojtStartDate = info.ojt_start_date || start_date || 'February 18, 2026';
+    const ojtEndDate = info.ojt_end_date || end_date || 'March 6, 2026';
+    const dailyHours = info.daily_hours || '[Specify your daily OJT hours, e.g., 8:00 AM - 5:00 PM]';
+    const purposeRole = info.purpose_role || '';
+    const backgroundActionPlan = info.background_action_plan || '';
+    const conclusion = info.conclusion || '';
+    const recommendationStudents = info.recommendation_students || '';
+    const recommendationCompany = info.recommendation_company || '';
+    const recommendationSchool = info.recommendation_school || '';
+    const acknowledgment = info.acknowledgment || '';
 
     downloadReportContent.innerHTML = `
         <div class="download-report">
@@ -130,11 +79,11 @@ function displayDownloadReport(report) {
                     <h2 class="report-cover-campus">Candon Campus</h2>
                     <div class="report-cover-spacer-large"></div>
                     <h1 class="report-cover-title">OJT REPORT</h1>
-                    <p class="report-cover-company">(Name of Company/office assigned)</p>
+                    <p class="report-cover-company">${escapeHtml(companyName)}</p>
                     <div class="report-cover-spacer-large"></div>
-                    <p class="report-cover-name">${student_name}</p>
-                    <p class="report-cover-program">Bachelor of Science in Information Technology</p>
-                    <p class="report-cover-sy">S.Y. 2025 - 2026</p>
+                    <p class="report-cover-name">${escapeHtml(studentName)}</p>
+                    <p class="report-cover-program">${escapeHtml(studentCourse)}</p>
+                    <p class="report-cover-sy">${escapeHtml(schoolYear)}</p>
                 </div>
             </div>
 
@@ -205,22 +154,25 @@ function displayDownloadReport(report) {
                 </div>
                 <div class="report-chapter">
                     <h2 class="report-chapter-title">CHAPTER I: COMPANY PROFILE</h2>
-                    
+
                     <h3 class="report-section-title">Introduction</h3>
-                    <div class="report-placeholder">
-                        <p><em>[Write the introduction of the company here. Include company name, location, nature of business, and background.]</em></p>
+                    <div class="report-content">
+                        ${companyName ? `<p><strong>Company Name:</strong> ${escapeHtml(companyName)}</p>` : ''}
+                        ${companyLocation ? `<p><strong>Location:</strong> ${escapeHtml(companyLocation)}</p>` : ''}
+                        ${companyNatureOfBusiness ? `<p><strong>Nature of Business:</strong> ${escapeHtml(companyNatureOfBusiness)}</p>` : ''}
+                        ${companyBackground ? `<p>${escapeHtml(companyBackground).replace(/\n/g, '<br>')}</p>` : '<p><em>[Write the introduction of the company here. Include company name, location, nature of business, and background.]</em></p>'}
                     </div>
 
                     <h3 class="report-section-title">Duration and Time</h3>
-                    <div class="report-placeholder">
-                        <p><em>Start Date: ${start_date}</em></p>
-                        <p><em>End Date: ${end_date}</em></p>
-                        <p><em>Daily Hours: [Specify your daily OJT hours, e.g., 8:00 AM - 5:00 PM]</em></p>
+                    <div class="report-content">
+                        <p><em>Start Date:</em> ${escapeHtml(ojtStartDate)}</p>
+                        <p><em>End Date:</em> ${escapeHtml(ojtEndDate)}</p>
+                        <p><em>Daily Hours:</em> ${escapeHtml(dailyHours)}</p>
                     </div>
 
                     <h3 class="report-section-title">Purpose/Role to the Company</h3>
-                    <div class="report-placeholder">
-                        <p><em>[Describe your specific role and what you aimed to achieve during the OJT]</em></p>
+                    <div class="report-content">
+                        ${purposeRole ? `<p>${escapeHtml(purposeRole).replace(/\n/g, '<br>')}</p>` : '<p><em>[Describe your specific role and what you aimed to achieve during the OJT]</em></p>'}
                     </div>
                 </div>
                 <div class="report-footer">
@@ -242,10 +194,10 @@ function displayDownloadReport(report) {
                 </div>
                 <div class="report-chapter">
                     <h2 class="report-chapter-title">CHAPTER II: IMMERSION DOCUMENTATION</h2>
-                    
+
                     <h3 class="report-section-title">Background of the Action Plan</h3>
-                    <div class="report-placeholder">
-                        <p><em>[Describe the plan you created before starting the immersion]</em></p>
+                    <div class="report-content">
+                        ${backgroundActionPlan ? `<p>${escapeHtml(backgroundActionPlan).replace(/\n/g, '<br>')}</p>` : '<p><em>[Describe the plan you created before starting the immersion]</em></p>'}
                     </div>
 
                     <h3 class="report-section-title">Program of Activities – Per Day</h3>
@@ -260,7 +212,7 @@ function displayDownloadReport(report) {
                         <tbody>
                             ${entries.map((entry, index) => `
                                 <tr>
-                                    <td>${new Date(entry.entry_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                                    <td>${new Date(entry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</td>
                                     <td>${escapeHtml(entry.title)}</td>
                                     <td>${escapeHtml(entry.ai_enhanced_description || entry.user_description || 'No description')}</td>
                                 </tr>
@@ -293,15 +245,18 @@ function displayDownloadReport(report) {
                 </div>
                 <div class="report-chapter">
                     <h2 class="report-chapter-title">CHAPTER III: CONCLUSION AND RECOMMENDATION</h2>
-                    
+
                     <h3 class="report-section-title">Conclusion</h3>
-                    <div class="report-placeholder">
-                        <p><em>[Summarize your overall experience and learnings]</em></p>
+                    <div class="report-content">
+                        ${conclusion ? `<p>${escapeHtml(conclusion).replace(/\n/g, '<br>')}</p>` : '<p><em>[Summarize your overall experience and learnings]</em></p>'}
                     </div>
 
                     <h3 class="report-section-title">Recommendation</h3>
-                    <div class="report-placeholder">
-                        <p><em>[Provide suggestions for future OJT students, the company, or the school]</em></p>
+                    <div class="report-content">
+                        ${recommendationStudents ? `<p><strong>For Future OJT Students:</strong><br>${escapeHtml(recommendationStudents).replace(/\n/g, '<br>')}</p>` : ''}
+                        ${recommendationCompany ? `<p><strong>For the Company:</strong><br>${escapeHtml(recommendationCompany).replace(/\n/g, '<br>')}</p>` : ''}
+                        ${recommendationSchool ? `<p><strong>For the School (ISPSC):</strong><br>${escapeHtml(recommendationSchool).replace(/\n/g, '<br>')}</p>` : ''}
+                        ${!recommendationStudents && !recommendationCompany && !recommendationSchool ? '<p><em>[Provide suggestions for future OJT students, the company, or the school]</em></p>' : ''}
                     </div>
                 </div>
                 <div class="report-footer">
@@ -323,7 +278,12 @@ function displayDownloadReport(report) {
                 </div>
                 <div class="report-chapter">
                     <h2 class="report-chapter-title">APPENDIX</h2>
-                    
+
+                    <h3 class="report-section-title">Acknowledgment</h3>
+                    <div class="report-content">
+                        ${acknowledgment ? `<p>${escapeHtml(acknowledgment).replace(/\n/g, '<br>')}</p>` : '<p><em>[Thank the people who helped you during your OJT]</em></p>'}
+                    </div>
+
                     <h3 class="report-section-title">Endorsement Letter</h3>
                     <div class="report-placeholder">
                         <p><em>[Insert scanned copy or text of the endorsement letter]</em></p>
@@ -348,24 +308,41 @@ function displayDownloadReport(report) {
                     <h3 class="report-section-title">Photo Documentation</h3>
                     <div class="report-photo-appendix">
                         ${(() => {
-                            const photoEntries = entries.filter(e => e.images && e.images.length > 0);
-                            return photoEntries.map((entry, idx) => {
+                            // Collect ALL images from ALL entries
+                            const allImages = [];
+                            entries.forEach(entry => {
+                                if (entry.images && entry.images.length > 0) {
+                                    entry.images.forEach((imageUrl, imgIndex) => {
+                                        allImages.push({
+                                            src: imageUrl,
+                                            title: entry.title,
+                                            date: entry.entry_date,
+                                            description: entry.ai_enhanced_description || entry.user_description || ''
+                                        });
+                                    });
+                                }
+                            });
+                            
+                            // Display all images in a grid (2 per row)
+                            return allImages.map((img, idx) => {
                                 if (idx % 2 === 0) {
-                                    const nextEntry = photoEntries[idx + 1];
+                                    const nextImg = allImages[idx + 1];
                                     return `
                                         <div class="report-photo-row">
                                             <div class="report-photo-item">
-                                                <img src="${entry.images[0]}" alt="${escapeHtml(entry.title)}" />
-                                                <p class="report-photo-caption">Figure: ${escapeHtml(entry.title)}</p>
-                                                <p class="report-photo-date">${new Date(entry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                                <img src="${img.src}" alt="${escapeHtml(img.title)}" />
+                                                <p class="report-photo-caption">Figure ${idx + 1}: ${escapeHtml(img.title)}</p>
+                                                <p class="report-photo-date">${new Date(img.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                                ${img.description ? `<p class="report-photo-desc"><em>${escapeHtml(img.description).substring(0, 150)}${img.description.length > 150 ? '...' : ''}</em></p>` : ''}
                                             </div>
-                                            ${nextEntry ? `
+                                            ${nextImg ? `
                                             <div class="report-photo-item">
-                                                <img src="${nextEntry.images[0]}" alt="${escapeHtml(nextEntry.title)}" />
-                                                <p class="report-photo-caption">Figure: ${escapeHtml(nextEntry.title)}</p>
-                                                <p class="report-photo-date">${new Date(nextEntry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                                <img src="${nextImg.src}" alt="${escapeHtml(nextImg.title)}" />
+                                                <p class="report-photo-caption">Figure ${idx + 2}: ${escapeHtml(nextImg.title)}</p>
+                                                <p class="report-photo-date">${new Date(nextImg.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                                ${nextImg.description ? `<p class="report-photo-desc"><em>${escapeHtml(nextImg.description).substring(0, 150)}${nextImg.description.length > 150 ? '...' : ''}</em></p>` : ''}
                                             </div>
-                                            ` : '<div class="report-photo-item"></div>'}
+                                            ` : ''}
                                         </div>
                                     `;
                                 }
@@ -726,18 +703,21 @@ async function handleDownloadWord() {
  * Create Word document HTML
  */
 function createWordDocumentHTML(report, imageCache = {}) {
-    const { entries, start_date, end_date, student_name = 'Student Name', chapter1, chapter2, chapter3 } = report;
-    
+    const { entries, start_date, end_date, student_name = 'Student Name', chapter1, chapter2, conclusion, recommendation } = report;
+
     // Parse chapters if available (AI-generated report)
-    let chapter1Html = '', chapter2Html = '', chapter3Html = '';
+    let chapter1Html = '', chapter2Html = '', conclusionHtml = '', recommendationHtml = '';
     if (chapter1) {
         chapter1Html = chapter1.split('\n').map(p => `<p>${p}</p>`).join('');
     }
     if (chapter2) {
         chapter2Html = chapter2.replace(/\n/g, '<br>');
     }
-    if (chapter3) {
-        chapter3Html = chapter3.split('\n').map(p => `<p>${p}</p>`).join('');
+    if (conclusion) {
+        conclusionHtml = conclusion.split('\n').map(p => `<p>${p}</p>`).join('');
+    }
+    if (recommendation) {
+        recommendationHtml = recommendation.split('\n').map(p => `<p>${p}</p>`).join('');
     }
 
     return `
@@ -965,24 +945,41 @@ function displayAIReport(report) {
                 <h2 class="report-chapter-title">Appendix: Photo Documentation</h2>
                 <div class="report-photo-appendix">
                     ${(() => {
-                        const photoEntries = entries.filter(e => e.images && e.images.length > 0);
-                        return photoEntries.map((entry, idx) => {
+                        // Collect ALL images from ALL entries
+                        const allImages = [];
+                        entries.forEach(entry => {
+                            if (entry.images && entry.images.length > 0) {
+                                entry.images.forEach((imageUrl, imgIndex) => {
+                                    allImages.push({
+                                        src: imageUrl,
+                                        title: entry.title,
+                                        date: entry.entry_date,
+                                        description: entry.ai_enhanced_description || entry.user_description || ''
+                                    });
+                                });
+                            }
+                        });
+                        
+                        // Display all images in a grid (2 per row)
+                        return allImages.map((img, idx) => {
                             if (idx % 2 === 0) {
-                                const nextEntry = photoEntries[idx + 1];
+                                const nextImg = allImages[idx + 1];
                                 return `
                                     <div class="report-photo-row">
                                         <div class="report-photo-item">
-                                            <img src="${entry.images[0]}" alt="${escapeHtml(entry.title)}" />
-                                            <p class="report-photo-caption">Figure: ${escapeHtml(entry.title)}</p>
-                                            <p class="report-photo-date">${new Date(entry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                            <img src="${img.src}" alt="${escapeHtml(img.title)}" />
+                                            <p class="report-photo-caption">Figure ${idx + 1}: ${escapeHtml(img.title)}</p>
+                                            <p class="report-photo-date">${new Date(img.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                            ${img.description ? `<p class="report-photo-desc"><em>${escapeHtml(img.description).substring(0, 150)}${img.description.length > 150 ? '...' : ''}</em></p>` : ''}
                                         </div>
-                                        ${nextEntry ? `
+                                        ${nextImg ? `
                                         <div class="report-photo-item">
-                                            <img src="${nextEntry.images[0]}" alt="${escapeHtml(nextEntry.title)}" />
-                                            <p class="report-photo-caption">Figure: ${escapeHtml(nextEntry.title)}</p>
-                                            <p class="report-photo-date">${new Date(nextEntry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                                            <img src="${nextImg.src}" alt="${escapeHtml(nextImg.title)}" />
+                                            <p class="report-photo-caption">Figure ${idx + 2}: ${escapeHtml(nextImg.title)}</p>
+                                            <p class="report-photo-date">${new Date(nextImg.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                            ${nextImg.description ? `<p class="report-photo-desc"><em>${escapeHtml(nextImg.description).substring(0, 150)}${nextImg.description.length > 150 ? '...' : ''}</em></p>` : ''}
                                         </div>
-                                        ` : '<div class="report-photo-item"></div>'}
+                                        ` : ''}
                                     </div>
                                 `;
                             }
