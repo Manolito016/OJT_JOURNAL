@@ -32,7 +32,15 @@
                         <p class="header-subtitle">Document your On-the-Job Training journey</p>
                     </div>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">
+                <div class="header-actions">
+                    <button class="btn btn-sm btn-outline" id="rateDocumentBtn" title="AI will rate your document and suggest improvements">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        Rate My Report
+                    </button>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode" aria-label="Toggle theme">
                     <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"/>
                         <line x1="12" y1="1" x2="12" y2="3"/>
@@ -157,8 +165,24 @@
                                     <input type="text" id="companyNatureOfBusiness" name="company_nature_of_business" placeholder="e.g., AI Training and Education">
                                 </div>
                                 <div class="form-group">
-                                    <label for="companyBackground">Introduction</label>
-                                    <textarea id="companyBackground" name="company_background" rows="4" placeholder="Brief introduction of the company — history, mission, vision, and core values..."></textarea>
+                                    <label for="companyBackground">Introduction
+                                        <div class="ai-buttons-group" style="margin-left: 8px;">
+                                            <button type="button" class="ai-generate-btn" onclick="autoGenerateField('companyBackground', 'companyIntroduction')">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                                                </svg>
+                                                Auto Generate
+                                            </button>
+                                            <button type="button" class="ai-enhance-btn" onclick="enhanceReportField('companyBackground', 'companyIntroduction')">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+                                                    <circle cx="12" cy="12" r="3"/>
+                                                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+                                                </svg>
+                                                Enhance
+                                            </button>
+                                        </div>
+                                    </label>
+                                    <textarea id="companyBackground" name="company_background" rows="5" placeholder="Brief introduction of the company — history, mission, vision, and core values..."></textarea>
                                 </div>
                             </div>
 
@@ -334,6 +358,23 @@
                                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                                     </svg>
                                     Clear Form
+                                </button>
+                                <button type="button" class="btn btn-outline" id="addReflectionBtn" title="AI will add deep reflection questions to your entry">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                    </svg>
+                                    Add Reflection
+                                </button>
+                                <button type="button" class="btn btn-outline" id="improveWritingBtn" title="AI will improve sentence variety and flow">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                                        <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                        <path d="M2 2l7.586 7.586"/>
+                                        <circle cx="11" cy="11" r="2"/>
+                                    </svg>
+                                    Improve Flow
                                 </button>
                             </div>
 
@@ -775,6 +816,25 @@
                     </div>
                     <div class="status-message" id="analysisStatusMessage"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Rating Modal -->
+    <div class="download-report-modal" id="ratingModal">
+        <div class="download-report-overlay"></div>
+        <div class="download-report-container rating-container">
+            <div class="download-report-header">
+                <h2>📊 AI Document Rating</h2>
+                <button class="modal-close" id="closeRatingBtn" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="rating-content" id="ratingContent">
+                <!-- Rating dashboard will be injected here -->
             </div>
         </div>
     </div>

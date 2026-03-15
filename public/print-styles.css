@@ -311,52 +311,71 @@
 
 /* Photo Appendix */
 .report-photo-appendix {
-    display: table;
-    width: 100%;
     margin-top: 1.5rem;
 }
 
-.report-photo-row {
-    display: table-row;
+/* Entry Header - Title and Date ONLY */
+.report-photo-entry-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e7ff;
+    page-break-inside: avoid;
+}
+
+.report-photo-entry-title {
+    font-family: Arial, sans-serif;
+    font-size: 13pt;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #1f2937;
+}
+
+.report-photo-entry-date {
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    color: #64748b;
+    margin: 0;
+    font-style: italic;
+}
+
+/* Photo Grid - 4 Columns */
+.report-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+    page-break-inside: avoid;
 }
 
 .report-photo-item {
-    display: table-cell;
-    width: 50%;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
     page-break-inside: avoid;
 }
 
 .report-photo-item img {
-    width: 80%;
-    max-width: 200px;
-    max-height: 150px;
+    width: 100%;
+    max-width: 180px;
+    max-height: 140px;
     object-fit: contain;
-    border: 1px solid #ddd;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 8px;
 }
 
 .report-photo-caption {
-    font-size: 10pt;
-    text-align: center;
-    font-weight: bold;
-    margin: 8px 0 4px 0;
-}
-
-.report-photo-date {
+    font-family: Arial, sans-serif;
     font-size: 9pt;
-    text-align: center;
-    font-style: italic;
-    color: #666;
+    font-weight: bold;
+    color: #64748b;
+    margin: 0;
 }
 
-.report-photo-desc {
-    font-size: 8pt;
-    text-align: center;
-    font-style: italic;
-    color: #555;
-    margin: 4px 0 0 0;
-    line-height: 1.3;
+/* Old 2-column layout - kept for backward compatibility */
+.report-photo-row {
+    display: table-row;
 }
 
 /* AI-Generated Content Styles */

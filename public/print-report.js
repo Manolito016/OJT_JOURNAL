@@ -308,46 +308,40 @@ function displayDownloadReport(report) {
                     <h3 class="report-section-title">Photo Documentation</h3>
                     <div class="report-photo-appendix">
                         ${(() => {
-                            // Collect ALL images from ALL entries
-                            const allImages = [];
+                            let figureNumber = 1;
+                            let html = '';
+
+                            // Group by entry
                             entries.forEach(entry => {
                                 if (entry.images && entry.images.length > 0) {
-                                    entry.images.forEach((imageUrl, imgIndex) => {
-                                        allImages.push({
-                                            src: imageUrl,
-                                            title: entry.title,
-                                            date: entry.entry_date,
-                                            description: entry.ai_enhanced_description || entry.user_description || ''
-                                        });
-                                    });
-                                }
-                            });
-                            
-                            // Display all images in a grid (2 per row)
-                            return allImages.map((img, idx) => {
-                                if (idx % 2 === 0) {
-                                    const nextImg = allImages[idx + 1];
-                                    return `
-                                        <div class="report-photo-row">
-                                            <div class="report-photo-item">
-                                                <img src="${img.src}" alt="${escapeHtml(img.title)}" />
-                                                <p class="report-photo-caption">Figure ${idx + 1}: ${escapeHtml(img.title)}</p>
-                                                <p class="report-photo-date">${new Date(img.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                                ${img.description ? `<p class="report-photo-desc"><em>${escapeHtml(img.description).substring(0, 150)}${img.description.length > 150 ? '...' : ''}</em></p>` : ''}
-                                            </div>
-                                            ${nextImg ? `
-                                            <div class="report-photo-item">
-                                                <img src="${nextImg.src}" alt="${escapeHtml(nextImg.title)}" />
-                                                <p class="report-photo-caption">Figure ${idx + 2}: ${escapeHtml(nextImg.title)}</p>
-                                                <p class="report-photo-date">${new Date(nextImg.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                                ${nextImg.description ? `<p class="report-photo-desc"><em>${escapeHtml(nextImg.description).substring(0, 150)}${nextImg.description.length > 150 ? '...' : ''}</em></p>` : ''}
-                                            </div>
-                                            ` : ''}
+                                    const entryDate = new Date(entry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+                                    // Entry header with title and date ONLY (no description)
+                                    html += `
+                                        <div class="report-photo-entry-header">
+                                            <h4 class="report-photo-entry-title">${escapeHtml(entry.title)}</h4>
+                                            <p class="report-photo-entry-date">${entryDate}</p>
                                         </div>
                                     `;
+
+                                    // Photo grid (4 columns)
+                                    html += `<div class="report-photo-grid">`;
+                                    
+                                    entry.images.forEach((imageUrl, imgIndex) => {
+                                        html += `
+                                            <div class="report-photo-item">
+                                                <img src="${imageUrl}" alt="${escapeHtml(entry.title)}" />
+                                                <p class="report-photo-caption">Figure ${figureNumber}</p>
+                                            </div>
+                                        `;
+                                        figureNumber++;
+                                    });
+
+                                    html += `</div>`;
                                 }
-                                return '';
-                            }).join('');
+                            });
+
+                            return html;
                         })()}
                     </div>
                 </div>
@@ -945,46 +939,40 @@ function displayAIReport(report) {
                 <h2 class="report-chapter-title">Appendix: Photo Documentation</h2>
                 <div class="report-photo-appendix">
                     ${(() => {
-                        // Collect ALL images from ALL entries
-                        const allImages = [];
+                        let figureNumber = 1;
+                        let html = '';
+
+                        // Group by entry
                         entries.forEach(entry => {
                             if (entry.images && entry.images.length > 0) {
-                                entry.images.forEach((imageUrl, imgIndex) => {
-                                    allImages.push({
-                                        src: imageUrl,
-                                        title: entry.title,
-                                        date: entry.entry_date,
-                                        description: entry.ai_enhanced_description || entry.user_description || ''
-                                    });
-                                });
-                            }
-                        });
-                        
-                        // Display all images in a grid (2 per row)
-                        return allImages.map((img, idx) => {
-                            if (idx % 2 === 0) {
-                                const nextImg = allImages[idx + 1];
-                                return `
-                                    <div class="report-photo-row">
-                                        <div class="report-photo-item">
-                                            <img src="${img.src}" alt="${escapeHtml(img.title)}" />
-                                            <p class="report-photo-caption">Figure ${idx + 1}: ${escapeHtml(img.title)}</p>
-                                            <p class="report-photo-date">${new Date(img.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                            ${img.description ? `<p class="report-photo-desc"><em>${escapeHtml(img.description).substring(0, 150)}${img.description.length > 150 ? '...' : ''}</em></p>` : ''}
-                                        </div>
-                                        ${nextImg ? `
-                                        <div class="report-photo-item">
-                                            <img src="${nextImg.src}" alt="${escapeHtml(nextImg.title)}" />
-                                            <p class="report-photo-caption">Figure ${idx + 2}: ${escapeHtml(nextImg.title)}</p>
-                                            <p class="report-photo-date">${new Date(nextImg.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                            ${nextImg.description ? `<p class="report-photo-desc"><em>${escapeHtml(nextImg.description).substring(0, 150)}${nextImg.description.length > 150 ? '...' : ''}</em></p>` : ''}
-                                        </div>
-                                        ` : ''}
+                                const entryDate = new Date(entry.entry_date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+                                // Entry header with title and date ONLY (no description)
+                                html += `
+                                    <div class="report-photo-entry-header">
+                                        <h4 class="report-photo-entry-title">${escapeHtml(entry.title)}</h4>
+                                        <p class="report-photo-entry-date">${entryDate}</p>
                                     </div>
                                 `;
+
+                                // Photo grid (4 columns)
+                                html += `<div class="report-photo-grid">`;
+                                
+                                entry.images.forEach((imageUrl, imgIndex) => {
+                                    html += `
+                                        <div class="report-photo-item">
+                                            <img src="${imageUrl}" alt="${escapeHtml(entry.title)}" />
+                                            <p class="report-photo-caption">Figure ${figureNumber}</p>
+                                        </div>
+                                    `;
+                                    figureNumber++;
+                                });
+
+                                html += `</div>`;
                             }
-                            return '';
-                        }).join('');
+                        });
+
+                        return html;
                     })()}
                 </div>
             </div>
